@@ -2,10 +2,11 @@
 
 namespace Orange\Wip\Controllers;
 
-use Validator;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Validator;
 
 use Orange\Wip\Interfaces\MyEventInterface;
+use Orange\Core\Auth\Auth;
 
 class DonmyersController
 {
@@ -23,17 +24,33 @@ class DonmyersController
 		return view('orange-wip::welcome');
 	}
 
+	public function auth(Auth $auth)
+	{
+		dump($auth);
+	}
+
 	public function validate()
 	{
 		echo '<pre>start validate'.PHP_EOL;
 
-		$rules = ['name' => 'matches'];
-
-		$input = ['name' => 'test'];
+		$input = [
+			'name' => 'abc',
+			'age'=>''
+		];
+		
+		$rules = [
+			'name' => ['required','matches:1'],
+			'age' => ['required']
+		];
 
 		$validator = Validator::make($input, $rules);
+		
+		/* actually preform validation */
+		$success = $validator->passes();
 
-		//dd($validator);
+		$errors = $validator->errors();
+
+		dd($validator);
 
 		echo 'end';
 	}
@@ -42,13 +59,15 @@ class DonmyersController
 	{
 		echo '<pre>start filter'.PHP_EOL;
 		
-		$rules = ['name' => 'replace'];
-
-		$input = ['name' => 'abc'];
+		$input = ['name' => 'abc','age'=>''];
+		$rules = ['name' => 'required|replace:a,x','age' => 'required'];
 
 		$validator = Validator::make($input, $rules);
 
-		//dd($validator);
+		/* actually preform validation */
+		$success = $validator->passes();
+
+		dd($validator);
 
 		echo 'end';
 	}

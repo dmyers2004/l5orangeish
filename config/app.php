@@ -179,17 +179,8 @@ return [
          * Application Packages
          */
         Orange\Core\Providers\OrangeServiceProvider::class,
+        Orange\Theme\Providers\OrangeThemeServiceProvider::class,
         Orange\Wip\Providers\OrangeServiceProvider::class,
-
-        /**
-         * Blade
-         */
-        Orange\Wip\Providers\BladeServiceProvider::class,
-
-        /**
-         * Validation Rules
-         */
-        Orange\Wip\Providers\ValidationRuleServiceProvider::class,
     ],
 
     /*
@@ -240,6 +231,7 @@ return [
         'View' => Illuminate\Support\Facades\View::class,
 
         'Joe' => Orange\Wip\Libraries\FooBar::class,
+        'Event' => Orange\Core\Event\Event::class,
     ],
 
 ];
