@@ -14,20 +14,31 @@ class Model extends Laravel_Model
   //protected $table = 'my_flights';
 
 	protected $setName;
-	
+
 	protected $rules = [
 	];
 
 	protected $ruleSets = [
 	];
-	
+
 	protected $validator;
-	protected $passed = false;
+	protected $success = false;
 
 	public function errors()
 	{
 		/* Laravel MessageBag */
 		return $this->validator->errors();
+	}
+
+	public function messageBag()
+	{
+		$data = new \StdClass;
+
+		$data->success = $this->success;
+		$data->input = $this->attributes;
+		$data->errors = $this->validator->errors();
+
+		return json_encode($data,JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP | JSON_UNESCAPED_UNICODE);
 	}
 
 	public function ruleSet(string $setName) : Model
@@ -62,7 +73,7 @@ class Model extends Laravel_Model
 			if (!isset($this->ruleSets[$setName])) {
 				throw new \Exception(sprintf('Could not locate the rule set "%s" on your class "%s".',$setName,__CLASS__));
 			}
-			
+
 			/* our rule sets are comma seperated string of column names */
 			$onlyRuleColumns = explode(',',$this->ruleSets[$setName]);
 		} else {
@@ -81,13 +92,10 @@ class Model extends Laravel_Model
 
 		$this->validator = Validator::make($this->attributes, $validationRules);
 
-		$success = $this->validator->passes();
-
-		//$this->validator->errors()->add('success',);
-		$this->validator->errors()->merge(['success'=>(bool)$success]);
+		$this->success = $this->validator->passes();
 
 		/* preform actual validation and return if it passed */
-		return $success;
+		return $this->success;
 	}
 
 } /* end class */

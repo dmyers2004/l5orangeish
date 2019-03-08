@@ -5,8 +5,10 @@
 Route::get('/', 'Orange\Theme\Controllers\MainController@index')->name('index');
 Route::get('/home', 'Orange\Theme\Controllers\MainController@index')->name('home');
 
-Route::get('/snippets', 'Orange\Theme\Controllers\SnippetsController@index');
+#Route::get('/snippets', 'Orange\Theme\Controllers\SnippetsController@index');
 
+
+Route::resource('/snippets', 'Orange\Theme\Controllers\SnippetsController');
 
 
 /*
