@@ -1,8 +1,8 @@
-document.addEventListener('DOMContentLoaded',function(e) {
-	$('body').on('click','.js-submit',function(e) {
+document.addEventListener('DOMContentLoaded',function() {
+	jQuery('body').on('click','.js-submit',function(e) {
 		e.preventDefault();
 
-		orangejax.before($(this).closest('form'));
+		orangejax.before(jQuery(this).closest('form'));
 	});
 });
 
@@ -22,7 +22,7 @@ document.addEventListener('DOMContentLoaded',function(e) {
  * Of course these can all be overridden becase they are simply anonyomus functions
  */
 
-orangejax = {};
+var orangejax = {};
 
 orangejax.before = function(closestForm) {
 	var form = {};
@@ -33,7 +33,7 @@ orangejax.before = function(closestForm) {
 	form.attribute = {};
 
   /* collect all of the attributes on the closest form element */
-	$.each(closestForm[0].attributes, function(index, attribute) {
+	jQuery.each(closestForm[0].attributes, function(index, attribute) {
     form.attribute[attribute.name] = attribute.value;
   });
 
@@ -56,7 +56,7 @@ orangejax.ajaxSubmit = function(form) {
 	/* Incase you need to build a special uri ie. Laravel */
 	var uri = orangejax.BuildURI();
 
-	$.ajax({
+	jQuery.ajax({
 		method: form.attribute.method,
 		url: uri,
 		dataType: 'json',
@@ -175,11 +175,11 @@ orangejax.confirm = function(form) {
 };
 
 orangejax.swapPostPatch = function(record) {
-	$('#'+orangejax.form.attribute.id).attr('method','PATCH');
+	jQuery('#'+orangejax.form.attribute.id).attr('method','PATCH');
 };
 
 orangejax.insertId = function(primaryFieldName,primaryValue) {
-	$('input[name="'+primaryFieldName+'"]').val(primaryValue);
+	jQuery('input[name="'+primaryFieldName+'"]').val(primaryValue);
 }
 
 orangejax.BuildURI = function(form) {
@@ -188,7 +188,7 @@ orangejax.BuildURI = function(form) {
 	 * Laravel Resourceful URIs
 	 */
 	var url = orangejax.form.attribute.action;
-	var primaryValue = $('input[name="'+orangejax.primaryFieldName+'"]').val();
+	var primaryValue = jQuery('input[name="'+orangejax.primaryFieldName+'"]').val();
 
 	if (primaryValue != '') {
 		url += '/' + primaryValue;
