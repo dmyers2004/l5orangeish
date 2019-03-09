@@ -36,7 +36,10 @@ class Model extends Laravel_Model
 
 		$data->success = $this->success;
 		$data->input = $this->attributes;
-		$data->errors = $this->validator->errors();
+
+		if (isset($this->validator)) {
+			$data->errors = $this->validator->errors();
+		}
 
 		return json_encode($data,JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP | JSON_UNESCAPED_UNICODE);
 	}
@@ -63,6 +66,13 @@ class Model extends Laravel_Model
 		unset($this->setName);
 
 		return $success;
+	}
+
+	public function delete()
+	{
+		$this->success = parent::delete();
+
+		return $this->success;
 	}
 
 	protected function validate(string $setName) : bool

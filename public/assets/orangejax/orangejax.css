@@ -1,0 +1,6 @@
+td.action form {
+	display: inline-block;
+}
+td.action a {
+	padding: 0 3px;
+}

@@ -8,7 +8,7 @@
 	</div>
 	<div class="col-md">
 		<div class="text-right">
-			<a href="/snippets/create" class="btn btn-secondary">New</a>
+			@new_button('(.$controller_path.)/create','New Snippet')
 		</div>
 	</div>
 </div>
@@ -32,11 +32,9 @@
 			<td>{{ $record->file }}</td>
 			<td>{{ $record->key }}</td>
 			<td>{{ $record->value }}</td>
-			<td class="text-center">
-				<a href="/snippets/{{ $record->id }}/edit"><i class="fa fa-pencil" aria-hidden="true"></i></a>
-				<form class="delete-form" method="delete" action="/snippets/{{ $record->id }}" data-redirect="/snippets" data-confirm-text="Are you sure?">
-					<a class="js-submit" href="#"><i class="fa fa-trash" aria-hidden="true"></i></a>
-				</form>
+			<td class="action text-center">
+				@edit_button((.$controller_path.)/(.$record->id.)/edit)
+				@delete_button((.$controller_path.)/(.$record->id.))
 			</td>
 		</tr>
 		@endforeach

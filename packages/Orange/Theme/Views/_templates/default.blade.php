@@ -6,7 +6,7 @@
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
 		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
 		<link rel="stylesheet" href="/assets/notify/notify.css">
-		<link rel="stylesheet" href="/assets/rest-forms/rest-forms.css">
+		<link rel="stylesheet" href="/assets/orangejax/orangejax.css">
     <title>Hello, world!</title>
   </head>
   <body>
@@ -23,6 +23,6 @@
 		<script src="https://cdnjs.cloudflare.com/ajax/libs/handlebars.js/4.0.11/handlebars.min.js"></script>
 		<script src="https://cdnjs.cloudflare.com/ajax/libs/bootbox.js/4.4.0/bootbox.min.js"></script>
     <script src="/assets/notify/notify.js"></script>
-    <script src="/assets/rest-forms/rest-forms.js"></script>
+    <script src="/assets/orangejax/orangejax.js"></script>
   </body>
 </html>

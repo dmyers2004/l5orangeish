@@ -1,6 +1,6 @@
 <?php
 
-namespace Orange\Wip\Models;
+namespace Orange\Theme\Models;
 
 use Orange\Core\Model\Model;
 
@@ -11,7 +11,7 @@ class Snippet extends Model
 	protected $table = 'snippets';
 
 	public $timestamps = false;
-	
+
 	protected $rules = [
 		'id'=>'integer',
 		'file'=>'required|string',
