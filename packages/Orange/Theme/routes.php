@@ -10,6 +10,9 @@ Route::get('/home', 'Orange\Theme\Controllers\MainController@index')->name('home
 
 Route::resource('/snippets', 'Orange\Theme\Controllers\SnippetsController');
 
+Route::get('/donmyers/test', 'Orange\Theme\Controllers\DonmyersController@test');
+Route::get('/donmyers/passbyuri/{name}', 'Orange\Theme\Controllers\DonmyersController@passbyuri');
+
 
 /*
 Route::get('login', 'Orange\Theme\Controllers\Auth\LoginController@showLoginForm')->name('login');

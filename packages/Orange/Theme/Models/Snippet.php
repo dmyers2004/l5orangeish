@@ -14,7 +14,7 @@ class Snippet extends Model
 
 	protected $rules = [
 		'id'=>'integer',
-		'file'=>'required|string',
+		'file'=>'required|string|matches:123',
 		'key'=>'required|string',
 		'value'=>'nullable|string',
 	];

@@ -1,108 +1,197 @@
-<?php 
+<?php
 
 namespace Orange\Core\Input;
 
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Validator;
+
+use Orange\Core\Filter\Filter;
+use Orange\Core\Validate\Validate;
 
 class Input
 {
 	/*
-	 *
+	 * instance of Illuminate\Http\Request
 	 */
 	protected $request;
 
 	/*
-	 *
+	 * Array of request form data
 	 */
-	protected $all;
+	protected $requestValues = [];
 
 	/*
-	 *
+	 * instance of Illuminate\Validator\Validator
 	 */
-	protected $validator;
-	
-	/*
+	public $validate;
+
+	/**
+	 * $filter
 	 *
+	 * @var undefined
 	 */
-	protected $passed = false;
-	
-	/*
+	public $filter;
+
+	/**
+	 * __construct
 	 *
+	 * @param Request $request
+	 * @return void
 	 */
-	public function __construct(Request $request)
+	public function __construct(Request $request,Filter $filter, Validate $validate)
 	{
 		$this->request = $request;
-		
-		#$this->all = $this->request->all();
-		$this->all = [
-			'name'=>'Johnny Appleseed',
-			'age'=>23,
-			'color'=>'orange',
-			'birthday'=>'11/18/1970',
-		];
-	}
-	
-	public function request() : array
-	{
-		return $this->all;
-	}
-	
-	public function valid(array $rules) : bool
-	{
-		$this->validator = Validator::make($this->all, $rules);
+		$this->filter = $filter;
+		$this->validate = $validate;
 
-		/* actually preform validation */
-		$this->passed = $this->validator->passes();
-		
-		return $this->passed;
+		$this->requestValues = $this->request->all();
 	}
-	
-	public function get_errors() : array
-	{
-		/* Laravel MessageBag */
-		return $this->validator->errors();
-	}
-	
-	public function has_errors() : bool
-	{
-		return $this->passed;
-	}
-	
-	public function filter(array $rules,array $only = null) : Input
-	{
-		$clean = (is_array($only)) ? array_intersect_key($this->all,array_combine($only,$only)) : $this->all;
-		
-		$validator = Validator::make($clean, $rules);
 
-		/* actually preform validation */
-		$validator->passes();
-		
-		$this->all = $validator->getData();
-		
+	/**
+	 * All of OUR request data
+	 * This maybe different then actual HTTP Request data
+	 *
+	 * @return void
+	 */
+	public function request(): array
+	{
+		return $this->requestValues;
+	}
+
+	/**
+	 * remap request input from one key value pair to a different key value
+	 *
+	 * @param array $map
+	 * @return void
+	 */
+	public function remap(array $map) : self
+	{
+		foreach ($map as $old_key => $new_key) {
+			$this->requestValues[$new_key] = $this->requestValues[$old_key];
+
+			unset($this->requestValues[$old_key]);
+		}
+
 		return $this;
 	}
-	
-	public function filteredWith(string $class_name,string $set = null) : array
+
+	/**
+	 * remove every other request entry except these
+	 *
+	 * @param array $only
+	 * @return void
+	 */
+	public function only(array $only) : self
+	{
+		$new_requestValues = [];
+
+		foreach ($only as $key) {
+			$new_requestValues = $this->requestValues[$key];
+		}
+
+		$this->requestValues = $new_requestValues;
+
+		return $this;
+	}
+
+	/**
+	 * Test if the current request is valid
+	 *
+	 * @param $rules
+	 * @return bool
+	 */
+	public function validate(array $rules): bool
+	{
+		$this->validate->multiple($rules,$this->requestValues);
+
+		$this->requestValues = $this->validate->getValues();
+
+		return $this->validate->getPassed();
+	}
+
+	/**
+	 * getMessageBag
+	 *
+	 * @return void
+	 */
+	public function getMessageBag()
+	{
+		return $this->validate->getMessageBag();
+	}
+
+	/**
+	 * hasError
+	 *
+	 * @return void
+	 */
+	public function hasError(): bool
+	{
+		return $this->validate->getPassed();
+	}
+
+	/**
+	 * validOrFail
+	 *
+	 * @param mixed $rules
+	 * @return void
+	 */
+	public function validOrFail($rules): self
+	{
+		abort(403);
+
+		return $this;
+	}
+
+	/**
+	 * filter the values in the request but don't return them
+	 *
+	 * @param array $rules
+	 * @param mixed array
+	 * @return void
+	 */
+	public function filter(array $rules): self
+	{
+		foreach ($rules as $name=>$filters) {
+			$this->requestValues[$name] = $this->filter->clean($filters,$this->requestValues[$name]);
+		}
+
+		return $this;
+	}
+
+	/**
+	 * validate/filter the values in the request
+	 * with the rules attached to a model
+	 *
+	 * @param string $class_name
+	 * @param mixed string
+	 * @return void
+	 */
+	public function validateAgainst(string $class_name, string $set = null): bool
 	{
 		if (!class_exists($class_name)) {
-			throw new Exception(sprintf('Class name "%s" not located.',$class_name));
+			throw new Exception(sprintf('Class name "%s" not located.', $class_name));
 		}
 
 		$object = new $class_name;
-		
-		if (!method_exists($object,'getRuleSet')) {
-			throw new Exception(sprintf('Could not locate the rule set "%s" on your class "%s".',$set,$class_name));
-		}
 
-		
-		
-		return $this->filter($rules,$only)->request();
+		$this->passed = $object->validate($set);
+
+		$this->messageBag = $object->errors();
+
+		return $this->passed;
 	}
-	
-	public function filtered(array $rules,array $only = null) : array
+
+	/**
+	 * validateAgainstOrFail
+	 *
+	 * @param string $class_name
+	 * @param mixed string
+	 * @return void
+	 */
+	public function validateAgainstOrFail(string $class_name, string $set = null): self
 	{
-		return $this->filter($rules,$only)->request();
+		abort(403);
+
+		return $this;
 	}
 
 } /* end class */

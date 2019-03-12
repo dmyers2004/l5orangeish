@@ -26,8 +26,8 @@ class Model extends Laravel_Model
 
 	public function errors()
 	{
-		/* Laravel MessageBag */
-		return $this->validator->errors();
+		/* Laravel MessageBag or nothing if we didn't even validate yet */
+		return (isset($this->validator)) ? $this->validator->errors() : [];
 	}
 
 	public function messageBag()
@@ -36,15 +36,12 @@ class Model extends Laravel_Model
 
 		$data->success = $this->success;
 		$data->input = $this->attributes;
-
-		if (isset($this->validator)) {
-			$data->errors = $this->validator->errors();
-		}
+		$data->errors = $this->errors();
 
 		return json_encode($data,JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP | JSON_UNESCAPED_UNICODE);
 	}
 
-	public function ruleSet(string $setName) : Model
+	public function ruleSet(string $setName) : self
 	{
 		$this->setName = $setName;
 
@@ -84,7 +81,7 @@ class Model extends Laravel_Model
 				throw new \Exception(sprintf('Could not locate the rule set "%s" on your class "%s".',$setName,__CLASS__));
 			}
 
-			/* our rule sets are comma seperated string of column names */
+			/* our rule sets are comma separated string of column names */
 			$onlyRuleColumns = explode(',',$this->ruleSets[$setName]);
 		} else {
 			$onlyRuleColumns = array_keys($this->rules);

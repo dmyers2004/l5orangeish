@@ -72,6 +72,8 @@ orangeJax.before = function(element,closestForm) {
 	 * form.attribute
 	 */
 
+console.log(form);
+
 	orangeJax.confirm(form);
 }
 

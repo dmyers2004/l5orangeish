@@ -23,21 +23,21 @@
 			<div class="form-group row">
 				<label class="col-sm-2 col-form-label text-right">File</label>
 				<div class="col-sm-10">
-      		<input type="text" class="form-control" value="{{ $record->file }}">
+      		<input type="text" class="form-control" name="file" value="{{ $record->file }}">
     		</div>
 			</div>
 
 			<div class="form-group row">
 				<label class="col-sm-2 col-form-label text-right">Key</label>
 				<div class="col-sm-10">
-      		<input type="text" class="form-control" value="{{ $record->key }}">
+      		<input type="text" class="form-control" name="key" value="{{ $record->key }}">
     		</div>
 			</div>
 
 			<div class="form-group row">
 				<label class="col-sm-2 col-form-label text-right">Value</label>
 				<div class="col-sm-10">
-      		<input type="text" class="form-control" value="{{ $record->value }}">
+      		<input type="text" class="form-control" name="value" value="{{ $record->value }}">
     		</div>
 			</div>
 
